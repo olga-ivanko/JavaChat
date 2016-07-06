@@ -10,6 +10,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,11 +24,20 @@ public class MessageReceiver implements Runnable {
     private int port;
     private ServerSocket serverSocket;
     private boolean working;
+    private List<MessageReceiverListener> listeners;
 
     public MessageReceiver(int port) throws IOException {
         this.port = port;
         this.serverSocket = new ServerSocket(port);
         this.serverSocket.setSoTimeout(1000);
+    }
+
+    public boolean addListener(MessageReceiverListener listener) {
+        return listeners.add(listener);
+    }
+
+    public boolean removeListener(MessageReceiverListener listener) {
+        return listeners.remove(listener);
     }
 
     @Override
@@ -44,7 +55,11 @@ public class MessageReceiver implements Runnable {
                 switch (command) {
                     case "MESSAGE":
                         String message = dis.readUTF();
-                        System.out.printf("\nMESSAGE:\n  FROM: %s\n  TEXT: %s\n\n", income.getInetAddress().getHostAddress(), message);
+//                        System.out.printf("\nMESSAGE:\n  FROM: %s\n  TEXT: %s\n\n", income.getInetAddress().getHostAddress(), message);
+                        
+                        for (MessageReceiverListener listener : listeners) {
+                            listener.messageReceived(income.getInetAddress().getHostAddress(), message);
+                        }
                         
                         dos.writeUTF("SUCCESS");
                         dos.flush();
@@ -54,6 +69,8 @@ public class MessageReceiver implements Runnable {
                         dos.flush();
                         break;
                 }
+            } catch (SocketTimeoutException ex) {
+                ; // NOOP
             } catch (IOException ex) {
                 Logger.getLogger(MessageReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }

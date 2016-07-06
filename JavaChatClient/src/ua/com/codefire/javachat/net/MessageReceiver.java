@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +32,8 @@ public class MessageReceiver implements Runnable {
         this.port = port;
         this.serverSocket = new ServerSocket(port);
         this.serverSocket.setSoTimeout(1000);
+
+        this.listeners = Collections.synchronizedList(new ArrayList<MessageReceiverListener>());
     }
 
     public boolean addListener(MessageReceiverListener listener) {
@@ -45,8 +49,10 @@ public class MessageReceiver implements Runnable {
         working = true;
 
         while (working) {
-            try {
-                Socket income = serverSocket.accept();
+            try (Socket income = serverSocket.accept()) {
+                income.setSoTimeout(1000);
+                income.setSoLinger(true, 1000);
+                
                 DataInputStream dis = new DataInputStream(income.getInputStream());
                 DataOutputStream dos = new DataOutputStream(income.getOutputStream());
 
@@ -56,13 +62,13 @@ public class MessageReceiver implements Runnable {
                     case "MESSAGE":
                         String message = dis.readUTF();
 //                        System.out.printf("\nMESSAGE:\n  FROM: %s\n  TEXT: %s\n\n", income.getInetAddress().getHostAddress(), message);
+
+                        dos.writeUTF("SUCCESS");
+                        dos.flush();
                         
                         for (MessageReceiverListener listener : listeners) {
                             listener.messageReceived(income.getInetAddress().getHostAddress(), message);
                         }
-                        
-                        dos.writeUTF("SUCCESS");
-                        dos.flush();
                         break;
                     default:
                         dos.writeUTF("UNKNOWN COMMAND");

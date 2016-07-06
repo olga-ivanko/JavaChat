@@ -24,11 +24,13 @@ public class MessageSender {
         this.port = port;
     }
 
-    private boolean sendMessage(String address, String text) {
+    public boolean sendMessage(String address, String text) {
 
         try (Socket client = new Socket(address, port)) {
             DataOutputStream dos = new DataOutputStream(client.getOutputStream());
             DataInputStream dis = new DataInputStream(client.getInputStream());
+            
+            dos.writeUTF("MESSAGE");
             dos.writeUTF(text);
             dos.flush();
             

@@ -36,6 +36,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         initNetwork();
 
         initComponents();
+        jtaMessage.requestFocus();
     }
 
     private void initNetwork() throws IOException {
@@ -135,7 +136,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             addHistory("me", message);
             jtaMessage.setText("");
         }
-
+        jtaMessage.requestFocus();
     }//GEN-LAST:event_jbSendActionPerformed
 
     /**
@@ -168,7 +169,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     @Override
     public void messageReceived(String address, String message) {
-           addHistory(address, message);
+        addHistory(address, message);
     }
 
     private void addHistory(String address, String message) {

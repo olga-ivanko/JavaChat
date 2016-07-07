@@ -70,6 +70,8 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jSplitPane1.setDividerLocation(250);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
+        jScrollPane1.setAutoscrolls(true);
+
         jtaHistory.setEditable(false);
         jtaHistory.setColumns(20);
         jtaHistory.setRows(5);
@@ -135,6 +137,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         if (sender.sendMessage(address, message)) {
             addHistory("me", message);
             jtaMessage.setText("");
+            jtaHistory.setCaretPosition(jtaHistory.getDocument().getLength());
         }
         jtaMessage.requestFocus();
     }//GEN-LAST:event_jbSendActionPerformed

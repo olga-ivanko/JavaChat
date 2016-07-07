@@ -5,6 +5,7 @@
  */
 package ua.com.codefire.javachat.ui;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -130,6 +131,10 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     private void jbSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSendActionPerformed
 
+        sendMessage();
+    }//GEN-LAST:event_jbSendActionPerformed
+
+    private void sendMessage() {
         String address = jtfAddress.getText();
         String message = jtaMessage.getText();
 
@@ -140,7 +145,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             jtaHistory.setCaretPosition(jtaHistory.getDocument().getLength());
         }
         jtaMessage.requestFocus();
-    }//GEN-LAST:event_jbSendActionPerformed
+    }
 
     /**
      * @param args the command line arguments

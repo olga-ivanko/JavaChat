@@ -5,6 +5,7 @@
  */
 package ua.com.codefire.javachat.ui;
 
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,6 +39,15 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
         initComponents();
         jtaMessage.requestFocus();
+        jtaMessage.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_CONTROL + KeyEvent.VK_ENTER) {
+                    sendMessage();
+                }
+            }
+        });
     }
 
     private void initNetwork() throws IOException {
@@ -130,7 +140,6 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSendActionPerformed
-
         sendMessage();
     }//GEN-LAST:event_jbSendActionPerformed
 

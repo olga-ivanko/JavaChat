@@ -42,8 +42,9 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jtaMessage.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                int key = e.getKeyCode();
-                if (key == KeyEvent.VK_CONTROL + KeyEvent.VK_ENTER) {
+                if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    e.consume();
+
                     sendMessage();
                 }
             }

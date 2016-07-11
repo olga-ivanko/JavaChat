@@ -28,27 +28,22 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     private MessageReceiver receiver;
     private MessageSender sender;
+    private String ipAddress;
 
     /**
      * Creates new form ChatFrame
      *
+     * @param ipAddress
      * @throws java.io.IOException
      */
-    public ChatFrame() throws IOException {
+    public ChatFrame(String ipAddress) throws IOException {
+        this.ipAddress = ipAddress;
+
         initNetwork();
 
         initComponents();
-        jtaMessage.requestFocus();
-        jtaMessage.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    e.consume();
 
-                    sendMessage();
-                }
-            }
-        });
+        jtaMessage.requestFocus();
     }
 
     private void initNetwork() throws IOException {
@@ -93,6 +88,11 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
         jtaMessage.setColumns(20);
         jtaMessage.setRows(5);
+        jtaMessage.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jtaMessageKeyPressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(jtaMessage);
 
         jSplitPane1.setRightComponent(jScrollPane2);
@@ -100,6 +100,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jLabel1.setText("IP: ");
 
         jtfAddress.setText("127.0.0.1");
+        jtfAddress.setEnabled(false);
 
         jbSend.setText("Send");
         jbSend.addActionListener(new java.awt.event.ActionListener() {
@@ -141,15 +142,25 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSendActionPerformed
+
         sendMessage();
+
     }//GEN-LAST:event_jbSendActionPerformed
 
+    private void jtaMessageKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtaMessageKeyPressed
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            evt.consume();
+
+            sendMessage();
+        }
+    }//GEN-LAST:event_jtaMessageKeyPressed
+
     private void sendMessage() {
-        String address = jtfAddress.getText();
+//        String address = jtfAddress.getText();
         String message = jtaMessage.getText();
 
         // TODO: Validate address and message
-        if (sender.sendMessage(address, message)) {
+        if (sender.sendMessage(ipAddress, message)) {
             addHistory("me", message);
             jtaMessage.setText("");
             jtaHistory.setCaretPosition(jtaHistory.getDocument().getLength());
@@ -157,22 +168,22 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jtaMessage.requestFocus();
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    new ChatFrame().setVisible(true);
-                } catch (IOException ex) {
-                    Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-    }
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String args[]) {
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    new ChatFrame().setVisible(true);
+//                } catch (IOException ex) {
+//                    Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

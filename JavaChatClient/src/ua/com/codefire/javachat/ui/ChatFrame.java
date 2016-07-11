@@ -7,8 +7,10 @@ package ua.com.codefire.javachat.ui;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,7 +45,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         initNetwork();
 
         initComponents();
-
+        loadHistory();
         setTitle(ipAddress);
 
         jtaMessage.requestFocus();
@@ -160,6 +162,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     private void sendMessage() {
 //        String address = jtfAddress.getText();
         String message = jtaMessage.getText();
+        jlStatus.setText(" ");
 
         // TODO: Validate address and message
         if (sender.sendMessage(ipAddress, message)) {
@@ -217,6 +220,17 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(jtaHistory.getText());
         } catch (IOException ex) {
+            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void loadHistory() {
+        try (FileInputStream fis = new FileInputStream(ipAddress + ".history")) {
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            jtaHistory.setText((String) ois.readObject());
+        } catch (IOException ex) {
+            jlStatus.setText("You have no message history with this contact");
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,7 +22,7 @@ public class ContactsFrame extends javax.swing.JFrame {
      */
     public ContactsFrame() {
         initComponents();
-        
+
         jlContacts.setModel(new DefaultListModel<>());
     }
 
@@ -116,9 +117,9 @@ public class ContactsFrame extends javax.swing.JFrame {
 
         if (evt.getClickCount() == 2 && jlContacts.getSelectedIndex() >= 0) {
             evt.consume();
-            
+
             String ipAddress = jlContacts.getSelectedValue();
-            
+
             try {
                 ChatFrame chat = new ChatFrame(ipAddress);
                 chat.setVisible(true);
@@ -130,10 +131,15 @@ public class ContactsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jlContactsMouseClicked
 
     private void jmiAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAddActionPerformed
-      
-        DefaultListModel<String>  dlm = (DefaultListModel<String>) jlContacts.getModel();
-        dlm.addElement("127.0.0.1");
-      
+
+        DefaultListModel<String> dlm = (DefaultListModel<String>) jlContacts.getModel();
+        String input = JOptionPane.showInputDialog("type ip address");
+        if (input.matches("^\\d{1,3}(\\.\\d{1,3}){3}$")) {
+            dlm.addElement(input);
+        }
+
+//        
+
     }//GEN-LAST:event_jmiAddActionPerformed
 
     /**

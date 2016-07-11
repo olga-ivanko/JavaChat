@@ -5,17 +5,34 @@
  */
 package ua.com.codefire.javachat.ui;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import ua.com.codefire.javachat.net.Contact;
+import ua.com.codefire.javachat.net.MessageReceiver;
+import ua.com.codefire.javachat.net.MessageReceiverListener;
 
 /**
  *
  * @author homefulloflove
  */
-public class ContactsFrame extends javax.swing.JFrame {
+public class ContactsFrame extends javax.swing.JFrame implements MessageReceiverListener {
+
+    private static final int SERVER_PORT = 5890;
+
+    private MessageReceiver receiver;
+
+    private List<Contact> contactList = new ArrayList<>();
 
     /**
      * Creates new form ContactsFrame
@@ -23,7 +40,27 @@ public class ContactsFrame extends javax.swing.JFrame {
     public ContactsFrame() {
         initComponents();
 
-        jlContacts.setModel(new DefaultListModel<>());
+        loadAction();
+
+        try {
+            initNetwork();
+        } catch (IOException ex) {
+            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        DefaultListModel<Contact> dlm = new DefaultListModel<>();
+
+        for (Contact contact : contactList) {
+            dlm.addElement(contact);
+        }
+
+        jlContacts.setModel(dlm);
+    }
+
+    private void initNetwork() throws IOException {
+        receiver = new MessageReceiver(SERVER_PORT);
+        receiver.addListener(this);
+        new Thread(receiver).start();
     }
 
     /**
@@ -45,6 +82,11 @@ public class ContactsFrame extends javax.swing.JFrame {
         jmiAdd = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jlContacts.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -118,10 +160,17 @@ public class ContactsFrame extends javax.swing.JFrame {
         if (evt.getClickCount() == 2 && jlContacts.getSelectedIndex() >= 0) {
             evt.consume();
 
-            String ipAddress = jlContacts.getSelectedValue();
+            String ipAddress = jlContacts.getSelectedValue().getIpAddress();
 
             try {
-                ChatFrame chat = new ChatFrame(ipAddress);
+                ChatFrame chat = new ChatFrame(ipAddress, SERVER_PORT);
+                receiver.addListener(chat);
+                chat.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        receiver.removeListener(chat);
+                    }
+                });
                 chat.setVisible(true);
             } catch (IOException ex) {
                 Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -132,15 +181,21 @@ public class ContactsFrame extends javax.swing.JFrame {
 
     private void jmiAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAddActionPerformed
 
-        DefaultListModel<String> dlm = (DefaultListModel<String>) jlContacts.getModel();
+        DefaultListModel<Contact> dlm = (DefaultListModel<Contact>) jlContacts.getModel();
         String input = JOptionPane.showInputDialog("type ip address");
         if (input.matches("^\\d{1,3}(\\.\\d{1,3}){3}$")) {
-            dlm.addElement(input);
+            Contact contact = new Contact(input);
+            dlm.addElement(contact);
+            contactList.add(contact);
         }
 
 //        
 
     }//GEN-LAST:event_jmiAddActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        saveAction();
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -171,6 +226,7 @@ public class ContactsFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new ContactsFrame().setVisible(true);
             }
@@ -180,11 +236,35 @@ public class ContactsFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList<String> jlContacts;
+    private javax.swing.JList<Contact> jlContacts;
     private javax.swing.JLabel jlStatus;
     private javax.swing.JMenu jmFile;
     private javax.swing.JMenu jmList;
     private javax.swing.JMenuBar jmbMain;
     private javax.swing.JMenuItem jmiAdd;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void messageReceived(String address, String message) {
+
+    }
+
+    private void saveAction() {
+        try (FileOutputStream fos = new FileOutputStream("contacts.list")) {
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(contactList);
+        } catch (IOException ex) {
+            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void loadAction() {
+        try (FileInputStream fis = new FileInputStream("contacts.list")) {
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            contactList = (List<Contact>) ois.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }

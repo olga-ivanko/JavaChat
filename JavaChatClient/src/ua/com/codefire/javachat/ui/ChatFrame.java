@@ -5,14 +5,10 @@
  */
 package ua.com.codefire.javachat.ui;
 
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import ua.com.codefire.javachat.net.MessageReceiver;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
 import ua.com.codefire.javachat.net.MessageSender;
 
@@ -24,36 +20,32 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-    private static final int SERVER_PORT = 5890;
-
-    private MessageReceiver receiver;
-    private MessageSender sender;
     private String ipAddress;
+    private int serverPort;
+    private MessageSender sender;
 
     /**
      * Creates new form ChatFrame
      *
      * @param ipAddress
+     * @param serverPort
      * @throws java.io.IOException
      */
-    public ChatFrame(String ipAddress) throws IOException {
+    public ChatFrame(String ipAddress, int serverPort) throws IOException {
         this.ipAddress = ipAddress;
+        this.serverPort = serverPort;
 
         initNetwork();
 
         initComponents();
-        
+
         setTitle(ipAddress);
 
         jtaMessage.requestFocus();
     }
 
     private void initNetwork() throws IOException {
-        receiver = new MessageReceiver(SERVER_PORT);
-        receiver.addListener(this);
-        new Thread(receiver).start();
-
-        sender = new MessageSender(SERVER_PORT);
+        sender = new MessageSender(serverPort);
     }
 
     /**
@@ -74,6 +66,11 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jlStatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jSplitPane1.setDividerLocation(250);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -150,6 +147,11 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         }
     }//GEN-LAST:event_jtaMessageKeyPressed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+
+
+    }//GEN-LAST:event_formWindowClosing
+
     private void sendMessage() {
 //        String address = jtfAddress.getText();
         String message = jtaMessage.getText();
@@ -192,11 +194,14 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     @Override
     public void messageReceived(String address, String message) {
-        addHistory(address, message);
+        if (ipAddress.equals(address)) {
+            addHistory(address, message);
+        }
     }
 
     private void addHistory(String address, String message) {
         String history = String.format("[%s] %s:\n    %s\n", timeFormat.format(new Date()), address, message);
         jtaHistory.append(history);
     }
+
 }

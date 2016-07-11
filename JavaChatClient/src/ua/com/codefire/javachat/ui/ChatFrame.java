@@ -42,6 +42,8 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         initNetwork();
 
         initComponents();
+        
+        setTitle(ipAddress);
 
         jtaMessage.requestFocus();
     }
@@ -68,11 +70,10 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jtaHistory = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         jtaMessage = new javax.swing.JTextArea();
-        jLabel1 = new javax.swing.JLabel();
-        jtfAddress = new javax.swing.JTextField();
         jbSend = new javax.swing.JButton();
+        jlStatus = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jSplitPane1.setDividerLocation(250);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -97,17 +98,14 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
         jSplitPane1.setRightComponent(jScrollPane2);
 
-        jLabel1.setText("IP: ");
-
-        jtfAddress.setText("127.0.0.1");
-        jtfAddress.setEnabled(false);
-
         jbSend.setText("Send");
         jbSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbSendActionPerformed(evt);
             }
         });
+
+        jlStatus.setText(" ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -116,12 +114,10 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(jlStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 303, Short.MAX_VALUE)
                         .addComponent(jbSend)))
                 .addContainerGap())
         );
@@ -132,9 +128,8 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jtfAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jbSend))
+                    .addComponent(jbSend)
+                    .addComponent(jlStatus))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -186,14 +181,13 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton jbSend;
+    private javax.swing.JLabel jlStatus;
     private javax.swing.JTextArea jtaHistory;
     private javax.swing.JTextArea jtaMessage;
-    private javax.swing.JTextField jtfAddress;
     // End of variables declaration//GEN-END:variables
 
     @Override

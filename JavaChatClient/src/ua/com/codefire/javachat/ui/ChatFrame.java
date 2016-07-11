@@ -160,8 +160,12 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         if (sender.sendMessage(ipAddress, message)) {
             addHistory("me", message);
             jtaMessage.setText("");
-            jtaHistory.setCaretPosition(jtaHistory.getDocument().getLength());
+
+        } 
+        else {
+            jlStatus.setText("Message was not sent");
         }
+        jtaHistory.setCaretPosition(jtaHistory.getDocument().getLength());
         jtaMessage.requestFocus();
     }
 

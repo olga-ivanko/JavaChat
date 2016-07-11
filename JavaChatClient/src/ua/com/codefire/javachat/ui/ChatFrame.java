@@ -229,7 +229,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             ObjectInputStream ois = new ObjectInputStream(fis);
             jtaHistory.setText((String) ois.readObject());
         } catch (IOException ex) {
-            jlStatus.setText("You have no message history with this contact");
+            jlStatus.setText("You have no message history with this contact yet");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }

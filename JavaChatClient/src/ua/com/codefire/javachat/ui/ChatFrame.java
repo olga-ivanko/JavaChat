@@ -6,9 +6,14 @@
 package ua.com.codefire.javachat.ui;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
 import ua.com.codefire.javachat.net.MessageSender;
 
@@ -149,7 +154,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-
+        saveHistory();
     }//GEN-LAST:event_formWindowClosing
 
     private void sendMessage() {
@@ -161,8 +166,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             addHistory("me", message);
             jtaMessage.setText("");
 
-        } 
-        else {
+        } else {
             jlStatus.setText("Message was not sent");
         }
         jtaHistory.setCaretPosition(jtaHistory.getDocument().getLength());
@@ -208,4 +212,12 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jtaHistory.append(history);
     }
 
+    private void saveHistory() {
+        try (FileOutputStream fos = new FileOutputStream(ipAddress + ".history")) {
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(jtaHistory.getText());
+        } catch (IOException ex) {
+            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

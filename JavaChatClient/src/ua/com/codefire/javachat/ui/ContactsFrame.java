@@ -80,6 +80,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         jmFile = new javax.swing.JMenu();
         jmList = new javax.swing.JMenu();
         jmiAdd = new javax.swing.JMenuItem();
+        jmiRemove = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -128,6 +129,14 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             }
         });
         jmList.add(jmiAdd);
+
+        jmiRemove.setText("Delate");
+        jmiRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiRemoveActionPerformed(evt);
+            }
+        });
+        jmList.add(jmiRemove);
 
         jmbMain.add(jmList);
 
@@ -189,13 +198,24 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             contactList.add(contact);
         }
 
-//        
+//       
 
     }//GEN-LAST:event_jmiAddActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         saveAction();
     }//GEN-LAST:event_formWindowClosing
+
+    private void jmiRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiRemoveActionPerformed
+        DefaultListModel<Contact> dlm = (DefaultListModel<Contact>) jlContacts.getModel();
+        if (jlContacts.getSelectedIndex() >= 0) {
+            Contact toBeRemoved = jlContacts.getSelectedValue();
+            dlm.removeElement(toBeRemoved);
+            contactList.remove(toBeRemoved);
+        } else {
+            jlStatus.setText("Choose contact to be deleted first");
+        }
+    }//GEN-LAST:event_jmiRemoveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -242,12 +262,8 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     private javax.swing.JMenu jmList;
     private javax.swing.JMenuBar jmbMain;
     private javax.swing.JMenuItem jmiAdd;
+    private javax.swing.JMenuItem jmiRemove;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void messageReceived(String address, String message) {
-
-    }
 
     private void saveAction() {
         try (FileOutputStream fos = new FileOutputStream("contacts.list")) {
@@ -266,5 +282,10 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    @Override
+    public void messageReceived(String address, String message) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

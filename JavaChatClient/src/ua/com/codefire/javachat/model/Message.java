@@ -42,6 +42,7 @@ public class Message implements Serializable{
         this.timestamp = timestamp;
         this.text = text;
         this.read = read;
+        this.income = true;
     }
     
     public Date getTimestamp() {

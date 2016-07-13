@@ -222,7 +222,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         if (contact.getIpAddress().equals(address)) {
             Message msg = new Message(new Date(), message, isActive());
             contact.getMessages().add(msg);
-            addHistory(msg.getTimestamp(), nickname, msg.getText());
+            addHistory(msg.getTimestamp(), contact.getName(), msg.getText());
         }
     }
 

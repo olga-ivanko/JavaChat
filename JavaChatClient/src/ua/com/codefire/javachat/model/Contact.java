@@ -46,7 +46,7 @@ public class Contact implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return name != null && !name.isEmpty() ? name : ipAddress;
     }
 
     public void setName(String name) {

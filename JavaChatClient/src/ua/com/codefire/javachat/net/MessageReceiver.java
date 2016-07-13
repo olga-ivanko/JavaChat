@@ -52,7 +52,7 @@ public class MessageReceiver implements Runnable {
             try (Socket income = serverSocket.accept()) {
                 income.setSoTimeout(1000);
                 income.setSoLinger(true, 1000);
-                
+
                 DataInputStream dis = new DataInputStream(income.getInputStream());
                 DataOutputStream dos = new DataOutputStream(income.getOutputStream());
 
@@ -65,7 +65,7 @@ public class MessageReceiver implements Runnable {
 
                         dos.writeUTF("SUCCESS");
                         dos.flush();
-                        
+
                         for (MessageReceiverListener listener : listeners) {
                             listener.messageReceived(income.getInetAddress().getHostAddress(), message);
                         }
@@ -81,6 +81,10 @@ public class MessageReceiver implements Runnable {
                 Logger.getLogger(MessageReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    public void stop() {
+        working = false;
     }
 
 }

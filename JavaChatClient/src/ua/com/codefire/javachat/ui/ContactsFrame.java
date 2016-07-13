@@ -324,8 +324,6 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         for (Contact contact : contactList) {
             if (contact.getIpAddress().equals(address)) {
                 foundContact = contact;
-                contact.increase(1);
-                jlContacts.repaint();
                 break;
             }
         }
@@ -333,22 +331,33 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         if (foundContact == null) {
             foundContact = new Contact(address);
             contactList.add(foundContact);
+
+            loadContactList();
         }
 
-        ChatFrame chatFrame = null;
+        ChatFrame foundChat = null;
         Window[] windows = getWindows();
         for (Window window : windows) {
             if (window instanceof ChatFrame) {
-                chatFrame = (ChatFrame) window;
+                ChatFrame chat = (ChatFrame) window;
+                
+                if (chat.getContact().equals(foundContact) && chat.isDisplayable()) {
+                    foundChat = chat;
+                }
             }
         }
 
-        if (chatFrame != null) {
-            if (chatFrame.getContact().getIpAddress().equals(address) && !chatFrame.isActive()) {
-                chatFrame.requestFocus();
+        if (foundChat != null) {
+            if (foundChat.getContact().getIpAddress().equals(address) && !foundChat.isActive()) {
+                foundChat.requestFocus();
             }
+            System.out.println("FOUND FRAME");
         } else {
+            foundContact.increase(1);
             foundContact.getMessages().add(msg);
+            System.out.println("NOT FOUND FRAME");
         }
+
+        jlContacts.repaint();
     }
 }

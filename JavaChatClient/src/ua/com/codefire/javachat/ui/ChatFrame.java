@@ -7,8 +7,12 @@ package ua.com.codefire.javachat.ui;
 
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import javax.swing.JOptionPane;
 import ua.com.codefire.javachat.model.Contact;
 import ua.com.codefire.javachat.model.Message;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
@@ -20,18 +24,21 @@ import ua.com.codefire.javachat.net.MessageSender;
  */
 public class ChatFrame extends javax.swing.JFrame implements MessageReceiverListener {
 
-    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat WEEK_FORMAT = new SimpleDateFormat("EEE HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
     /**
      * Describes the info of interlocutor.
      */
-    private Contact contact;
-    private int serverPort;
+    private final Contact contact;
+    private final int serverPort;
     private MessageSender sender;
 
     /**
      * Creates new form ChatFrame
      *
-     * @param ipAddress
+     * @param contact
      * @param serverPort
      * @throws java.io.IOException
      */
@@ -73,6 +80,12 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jtaMessage = new javax.swing.JTextArea();
         jbSend = new javax.swing.JButton();
         jlStatus = new javax.swing.JLabel();
+        jmbMain = new javax.swing.JMenuBar();
+        jmFile = new javax.swing.JMenu();
+        jmiCloseWindow = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jmiExit = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -116,23 +129,51 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
         jlStatus.setText(" ");
 
+        jmFile.setText("File");
+
+        jmiCloseWindow.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        jmiCloseWindow.setText("Close window");
+        jmiCloseWindow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiCloseWindowActionPerformed(evt);
+            }
+        });
+        jmFile.add(jmiCloseWindow);
+        jmFile.add(jSeparator1);
+
+        jmiExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        jmiExit.setText("Exit");
+        jmiExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiExitActionPerformed(evt);
+            }
+        });
+        jmFile.add(jmiExit);
+
+        jmbMain.add(jmFile);
+
+        jMenu2.setText("Edit");
+        jmbMain.add(jMenu2);
+
+        setJMenuBar(jmbMain);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jlStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jSplitPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jlStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jbSend)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -161,18 +202,29 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-//        saveHistory();
+
     }//GEN-LAST:event_formWindowClosing
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+
         contact.setUnread(0);
         setTitle(contact.toString());
-//        getParent().invalidate();
-//        getParent().repaint();
+
     }//GEN-LAST:event_formWindowActivated
 
+    private void jmiCloseWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiCloseWindowActionPerformed
+        
+        dispose();
+        
+    }//GEN-LAST:event_jmiCloseWindowActionPerformed
+
+    private void jmiExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiExitActionPerformed
+        
+        JOptionPane.showMessageDialog(this, "Function isn't implemented.");
+        
+    }//GEN-LAST:event_jmiExitActionPerformed
+
     private void sendMessage() {
-//        String address = jtfAddress.getText();
         String message = jtaMessage.getText().trim();
 
         if (!message.isEmpty()) {
@@ -192,29 +244,18 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         }
     }
 
-//    /**
-//     * @param args the command line arguments
-//     */
-//    public static void main(String args[]) {
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    new ChatFrame().setVisible(true);
-//                } catch (IOException ex) {
-//                    Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
-//    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton jbSend;
     private javax.swing.JLabel jlStatus;
+    private javax.swing.JMenu jmFile;
+    private javax.swing.JMenuBar jmbMain;
+    private javax.swing.JMenuItem jmiCloseWindow;
+    private javax.swing.JMenuItem jmiExit;
     private javax.swing.JTextArea jtaHistory;
     private javax.swing.JTextArea jtaMessage;
     // End of variables declaration//GEN-END:variables
@@ -229,34 +270,25 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }
 
     private void addHistory(Date when, String address, String message) {
-        String history = String.format("[%s] %s:\n    %s\n", timeFormat.format(when), address, message);
-        jtaHistory.append(history);
-    }
+        long days = Math.abs(TimeUnit.DAYS.convert(new Date().getTime() - when.getTime(), TimeUnit.MILLISECONDS));
 
-//    private void saveHistory() {
-//        try (FileOutputStream fos = new FileOutputStream(new File("history", contact.getIpAddress() + ".history"))) {
-//            ObjectOutputStream oos = new ObjectOutputStream(fos);
-//            oos.writeObject(jtaHistory.getText());
-//        } catch (IOException ex) {
-//            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-    private void loadHistory() {
-        for (Message message : contact.getMessages()) {
-            if (message.isIncome()) {
-                addHistory(message.getTimestamp(), contact.getIpAddress(), message.getText());
-            } else {
-                addHistory(message.getTimestamp(), "me", message.getText());
-            }
+        String date;
+
+        if (days < 7) {
+            date = TIME_FORMAT.format(when);
+        } else if (days < 30) {
+            date = WEEK_FORMAT.format(when);
+        } else {
+            date = DATE_FORMAT.format(when);
         }
 
-//        try (FileInputStream fis = new FileInputStream(new File("history", contact.getIpAddress() + ".history"))) {
-//            ObjectInputStream ois = new ObjectInputStream(fis);
-//            jtaHistory.setText((String) ois.readObject());
-//        } catch (IOException ex) {
-//            jlStatus.setText("You have no message history with this contact yet");
-//        } catch (ClassNotFoundException ex) {
-//            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        jtaHistory.append(String.format("[%s] %s:\n    %s\n", date, address, message));
+    }
+
+    private void loadHistory() {
+        for (Message message : contact.getMessages()) {
+            String from = message.isIncome() ? contact.getIpAddress() : "me";
+            addHistory(message.getTimestamp(), from, message.getText());
+        }
     }
 }

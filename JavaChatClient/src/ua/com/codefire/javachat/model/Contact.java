@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ua.com.codefire.javachat.net;
+package ua.com.codefire.javachat.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,6 +18,7 @@ public class Contact implements Serializable {
     private String ipAddress;
     private String name;
     private int unread;
+    private List<Message> messages = new ArrayList<>();
 
     public Contact(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -26,6 +29,10 @@ public class Contact implements Serializable {
         this.name = name;
     }
 
+    public List<Message> getMessages() {
+        return messages;
+    }
+    
     public int getUnread() {
         return unread;
     }

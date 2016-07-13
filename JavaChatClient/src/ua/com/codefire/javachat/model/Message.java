@@ -5,13 +5,14 @@
  */
 package ua.com.codefire.javachat.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  * @author homefulloflove
  */
-public class Message {
+public class Message implements Serializable{
 
     private Date timestamp;
     private boolean income;

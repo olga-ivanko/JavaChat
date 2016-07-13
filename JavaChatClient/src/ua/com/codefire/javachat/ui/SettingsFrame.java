@@ -32,6 +32,8 @@ public class SettingsFrame extends javax.swing.JDialog {
         
         setModal(true);
         
+        setModal(true);
+        
         String nickname = Settings.getProperty("nickname");
         jtfNickname.setText(nickname);
     }

@@ -16,20 +16,21 @@
  */
 package ua.com.codefire.javachat.ui;
 
-import java.util.Properties;
 import ua.com.codefire.javachat.Settings;
 
 /**
  *
  * @author CodeFireUA <edu@codefire.com.ua>
  */
-public class SettingsFrame extends javax.swing.JFrame {
+public class SettingsFrame extends javax.swing.JDialog {
 
     /**
      * Creates new form SettingsFrame
      */
     public SettingsFrame() {
         initComponents();
+        
+        setModal(true);
         
         String nickname = Settings.getProperty("nickname");
         jtfNickname.setText(nickname);
@@ -48,7 +49,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jtfNickname = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jButton1.setText("OK");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

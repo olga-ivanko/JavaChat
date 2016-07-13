@@ -31,6 +31,19 @@ public class Message implements Serializable{
         this.read = true;
     }
 
+    /**
+     * Constructor for incoming message creation.
+     * 
+     * @param timestamp
+     * @param text
+     * @param read 
+     */
+    public Message(Date timestamp, String text, boolean read) {
+        this.timestamp = timestamp;
+        this.text = text;
+        this.read = read;
+    }
+    
     public Date getTimestamp() {
         return timestamp;
     }

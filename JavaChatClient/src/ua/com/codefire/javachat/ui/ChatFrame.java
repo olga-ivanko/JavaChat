@@ -233,7 +233,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }
 
     private void saveHistory() {
-        try (FileOutputStream fos = new FileOutputStream(contact.getIpAddress() + ".history")) {
+        try (FileOutputStream fos = new FileOutputStream(new File("history", contact.getIpAddress() + ".history"))) {
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(jtaHistory.getText());
         } catch (IOException ex) {
@@ -242,7 +242,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }
 
     private void loadHistory() {
-        try (FileInputStream fis = new FileInputStream(contact.getIpAddress() + ".history")) {
+        try (FileInputStream fis = new FileInputStream(new File("history", contact.getIpAddress() + ".history"))) {
             ObjectInputStream ois = new ObjectInputStream(fis);
             jtaHistory.setText((String) ois.readObject());
         } catch (IOException ex) {

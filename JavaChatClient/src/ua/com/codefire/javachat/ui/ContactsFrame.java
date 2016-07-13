@@ -8,6 +8,7 @@ package ua.com.codefire.javachat.ui;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -300,6 +301,10 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     }
 
     private void loadAction() {
+        File history = new File("history");
+        if (!history.exists()) {
+            history.mkdir();
+        }
         try (FileInputStream fis = new FileInputStream("contacts.list")) {
             ObjectInputStream ois = new ObjectInputStream(fis);
             contactList = (List<Contact>) ois.readObject();

@@ -15,6 +15,7 @@ public class Contact implements Serializable {
 
     private String ipAddress;
     private String name;
+    private int unread;
 
     public Contact(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -23,6 +24,14 @@ public class Contact implements Serializable {
     public Contact(String ipAddress, String name) {
         this.ipAddress = ipAddress;
         this.name = name;
+    }
+
+    public int getUnread() {
+        return unread;
+    }
+
+    public void setUnread(int unread) {
+        this.unread = unread;
     }
 
     public String getIpAddress() {
@@ -39,7 +48,17 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "[" + ipAddress + ']';
+        String display = (name != null && !name.isEmpty()) ? name : ipAddress;
+
+        if (unread > 0) {
+            return String.format("%s (%d)", display, unread);
+        } else {
+            return String.format("%s", display);
+        }
+    }
+
+    public void increase(int count) {
+        this.unread += count;
     }
 
 }

@@ -5,11 +5,13 @@
  */
 package ua.com.codefire.javachat.ui;
 
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +19,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -37,6 +40,8 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     private MessageReceiver receiver;
 
     private List<Contact> contactList = new ArrayList<>();
+    
+    private Properties properties = new Properties();
 
     /**
      * Creates new form ContactsFrame
@@ -92,6 +97,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         jmiRemove = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(230, 350));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -239,8 +245,10 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     }//GEN-LAST:event_jmiRemoveActionPerformed
 
     private void jmiExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiExitActionPerformed
+        receiver.stop();
         saveAction();
-        System.exit(0);
+        dispose();
+//        System.exit(0);
     }//GEN-LAST:event_jmiExitActionPerformed
 
     /**
@@ -299,13 +307,24 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         } catch (IOException ex) {
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        Rectangle bounds = getBounds();
+        
+        properties.setProperty("frame.contacts.x", Integer.toString(bounds.x));
+        properties.setProperty("frame.contacts.y", Integer.toString(bounds.y));
+        properties.setProperty("frame.contacts.w", Integer.toString(bounds.width));
+        properties.setProperty("frame.contacts.h", Integer.toString(bounds.height));
+        
+        storeSettings();
     }
 
     private void loadAction() {
         File history = new File("history");
+        
         if (!history.exists()) {
             history.mkdir();
         }
+        
         try (FileInputStream fis = new FileInputStream("contacts.list")) {
             ObjectInputStream ois = new ObjectInputStream(fis);
             contactList = (List<Contact>) ois.readObject();
@@ -313,6 +332,14 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        loadSettings();
+        
+        int x = Integer.parseInt(properties.getProperty("frame.contacts.x", "0"));
+        int y = Integer.parseInt(properties.getProperty("frame.contacts.y", "0"));
+        int w = Integer.parseInt(properties.getProperty("frame.contacts.w", "230"));
+        int h = Integer.parseInt(properties.getProperty("frame.contacts.h", "360"));
+        
+        setBounds(x, y, w, h);
     }
 
     @Override
@@ -351,13 +378,31 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             if (foundChat.getContact().getIpAddress().equals(address) && !foundChat.isActive()) {
                 foundChat.requestFocus();
             }
-            System.out.println("FOUND FRAME");
         } else {
             foundContact.increase(1);
             foundContact.getMessages().add(msg);
-            System.out.println("NOT FOUND FRAME");
         }
 
         jlContacts.repaint();
+    }
+
+    private void loadSettings() {
+        try (FileInputStream fis = new FileInputStream("settings.properties")) {
+            properties.load(fis);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void storeSettings() {
+        try (FileOutputStream fos = new FileOutputStream("settings.properties")) {
+            properties.store(fos, null);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

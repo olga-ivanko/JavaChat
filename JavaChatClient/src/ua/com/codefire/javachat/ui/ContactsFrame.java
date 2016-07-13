@@ -11,7 +11,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +18,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -309,14 +307,12 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         
         Rectangle bounds = getBounds();
         
-        Properties properties = Settings.getInstance().getProperties();
+        Settings.setProperty("frame.contacts.x", Integer.toString(bounds.x));
+        Settings.setProperty("frame.contacts.y", Integer.toString(bounds.y));
+        Settings.setProperty("frame.contacts.w", Integer.toString(bounds.width));
+        Settings.setProperty("frame.contacts.h", Integer.toString(bounds.height));
         
-        properties.setProperty("frame.contacts.x", Integer.toString(bounds.x));
-        properties.setProperty("frame.contacts.y", Integer.toString(bounds.y));
-        properties.setProperty("frame.contacts.w", Integer.toString(bounds.width));
-        properties.setProperty("frame.contacts.h", Integer.toString(bounds.height));
-        
-        Settings.getInstance().storeSettings();
+        Settings.storeSettings();
     }
 
     private void loadAction() {
@@ -333,18 +329,16 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Properties properties = Settings.getInstance().getProperties();
-        
-        int x = Integer.parseInt(properties.getProperty("frame.contacts.x", "0"));
-        int y = Integer.parseInt(properties.getProperty("frame.contacts.y", "0"));
-        int w = Integer.parseInt(properties.getProperty("frame.contacts.w", "230"));
-        int h = Integer.parseInt(properties.getProperty("frame.contacts.h", "360"));
+        int x = Integer.parseInt(Settings.getProperty("frame.contacts.x", "0"));
+        int y = Integer.parseInt(Settings.getProperty("frame.contacts.y", "0"));
+        int w = Integer.parseInt(Settings.getProperty("frame.contacts.w", "230"));
+        int h = Integer.parseInt(Settings.getProperty("frame.contacts.h", "360"));
         
         setBounds(x, y, w, h);
     }
 
     @Override
-    public void messageReceived(String address, String message) {
+    public void messageReceived(String address, String nickname, String message) {
         Message msg = new Message(new Date(), message, false);
 
         Contact foundContact = null;
@@ -362,6 +356,8 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
 
             loadContactList();
         }
+        
+        foundContact.setName(nickname);
 
         ChatFrame foundChat = null;
         Window[] windows = getWindows();

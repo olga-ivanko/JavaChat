@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ua.com.codefire.javachat.Settings;
 
 /**
  *
@@ -25,12 +26,14 @@ public class MessageSender {
     }
 
     public boolean sendMessage(String address, String text) {
+        String nickname = Settings.getProperty("nickname");
 
         try (Socket client = new Socket(address, port)) {
             DataOutputStream dos = new DataOutputStream(client.getOutputStream());
             DataInputStream dis = new DataInputStream(client.getInputStream());
             
             dos.writeUTF("MESSAGE");
+            dos.writeUTF(nickname);
             dos.writeUTF(text);
             dos.flush();
             

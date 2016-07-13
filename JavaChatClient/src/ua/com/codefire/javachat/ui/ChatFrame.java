@@ -218,11 +218,11 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void messageReceived(String address, String message) {
+    public void messageReceived(String address, String nickname, String message) {
         if (contact.getIpAddress().equals(address)) {
             Message msg = new Message(new Date(), message, isActive());
             contact.getMessages().add(msg);
-            addHistory(msg.getTimestamp(), address, msg.getText());
+            addHistory(msg.getTimestamp(), nickname, msg.getText());
         }
     }
 

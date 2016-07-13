@@ -35,41 +35,53 @@ public final class Settings {
     private static final Settings instance = new Settings();
 
     static {
-        instance.loadSettings();
+        loadSettings();
     }
 
     public static Settings getInstance() {
         return instance;
     }
 
+    public static Properties loadSettings() {
+        try (FileInputStream fis = new FileInputStream("settings.properties")) {
+            instance.properties.load(fis);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return instance.properties;
+    }
+
+    public static Properties storeSettings() {
+        try (FileOutputStream fos = new FileOutputStream("settings.properties")) {
+            instance.properties.store(fos, null);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return instance.properties;
+    }
+
+    public static String getProperty(String key) {
+        return instance.properties.getProperty(key);
+    }
+
+    public static synchronized Object setProperty(String key, String value) {
+        return instance.properties.setProperty(key, value);
+    }
+
+    public static String getProperty(String key, String defaultValue) {
+        return instance.properties.getProperty(key, defaultValue);
+    }
+
     // DATA
     private Properties properties = new Properties();
 
     public Properties getProperties() {
-        return properties;
-    }
-
-    public Properties loadSettings() {
-        try (FileInputStream fis = new FileInputStream("settings.properties")) {
-            properties.load(fis);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return properties;
-    }
-
-    public Properties storeSettings() {
-        try (FileOutputStream fos = new FileOutputStream("settings.properties")) {
-            properties.store(fos, null);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         return properties;
     }
 }

@@ -60,6 +60,7 @@ public class MessageReceiver implements Runnable {
 
                 switch (command) {
                     case "MESSAGE":
+                        String nickname = dis.readUTF();
                         String message = dis.readUTF();
 //                        System.out.printf("\nMESSAGE:\n  FROM: %s\n  TEXT: %s\n\n", income.getInetAddress().getHostAddress(), message);
 
@@ -67,7 +68,7 @@ public class MessageReceiver implements Runnable {
                         dos.flush();
 
                         for (MessageReceiverListener listener : listeners) {
-                            listener.messageReceived(income.getInetAddress().getHostAddress(), message);
+                            listener.messageReceived(income.getInetAddress().getHostAddress(), nickname, message);
                         }
                         break;
                     default:

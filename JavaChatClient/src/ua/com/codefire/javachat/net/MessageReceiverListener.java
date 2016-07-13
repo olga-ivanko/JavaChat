@@ -15,8 +15,9 @@ public interface MessageReceiverListener {
      * Trigger when message was received.
      * 
      * @param address sender address.
+     * @param nickname sender nickname.
      * @param message text of message.
      */
-    public void messageReceived(String address, String message);
+    public void messageReceived(String address, String nickname, String message);
     
 }

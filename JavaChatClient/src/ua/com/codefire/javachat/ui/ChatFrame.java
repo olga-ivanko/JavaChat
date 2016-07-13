@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ua.com.codefire.javachat.net.Contact;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
 import ua.com.codefire.javachat.net.MessageSender;
 
@@ -26,8 +27,10 @@ import ua.com.codefire.javachat.net.MessageSender;
 public class ChatFrame extends javax.swing.JFrame implements MessageReceiverListener {
 
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-
-    private String ipAddress;
+    /**
+     * Describes the info of interlocutor.
+     */
+    private Contact contact;
     private int serverPort;
     private MessageSender sender;
 
@@ -38,21 +41,25 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
      * @param serverPort
      * @throws java.io.IOException
      */
-    public ChatFrame(String ipAddress, int serverPort) throws IOException {
-        this.ipAddress = ipAddress;
+    public ChatFrame(Contact contact, int serverPort) throws IOException {
+        this.contact = contact;
         this.serverPort = serverPort;
 
         initNetwork();
 
         initComponents();
         loadHistory();
-        setTitle(ipAddress);
+        setTitle(contact.toString());
 
         jtaMessage.requestFocus();
     }
 
     private void initNetwork() throws IOException {
         sender = new MessageSender(serverPort);
+    }
+
+    public Contact getContact() {
+        return contact;
     }
 
     /**
@@ -76,6 +83,9 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
+            }
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
             }
         });
 
@@ -159,13 +169,20 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         saveHistory();
     }//GEN-LAST:event_formWindowClosing
 
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        contact.setUnread(0);
+        setTitle(contact.toString());
+//        getParent().invalidate();
+//        getParent().repaint();
+    }//GEN-LAST:event_formWindowActivated
+
     private void sendMessage() {
 //        String address = jtfAddress.getText();
         String message = jtaMessage.getText();
         jlStatus.setText(" ");
 
         // TODO: Validate address and message
-        if (sender.sendMessage(ipAddress, message)) {
+        if (sender.sendMessage(contact.getIpAddress(), message)) {
             addHistory("me", message);
             jtaMessage.setText("");
 
@@ -205,7 +222,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     @Override
     public void messageReceived(String address, String message) {
-        if (ipAddress.equals(address)) {
+        if (contact.getIpAddress().equals(address)) {
             addHistory(address, message);
         }
     }
@@ -216,7 +233,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }
 
     private void saveHistory() {
-        try (FileOutputStream fos = new FileOutputStream(ipAddress + ".history")) {
+        try (FileOutputStream fos = new FileOutputStream(contact.getIpAddress() + ".history")) {
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(jtaHistory.getText());
         } catch (IOException ex) {
@@ -225,7 +242,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }
 
     private void loadHistory() {
-        try (FileInputStream fis = new FileInputStream(ipAddress + ".history")) {
+        try (FileInputStream fis = new FileInputStream(contact.getIpAddress() + ".history")) {
             ObjectInputStream ois = new ObjectInputStream(fis);
             jtaHistory.setText((String) ois.readObject());
         } catch (IOException ex) {

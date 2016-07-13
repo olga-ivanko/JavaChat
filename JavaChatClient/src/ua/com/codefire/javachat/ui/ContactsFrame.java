@@ -5,6 +5,7 @@
  */
 package ua.com.codefire.javachat.ui;
 
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
@@ -48,6 +49,11 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        loadContactList();
+
+    }
+
+    private void loadContactList() {
         DefaultListModel<Contact> dlm = new DefaultListModel<>();
 
         for (Contact contact : contactList) {
@@ -76,9 +82,9 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         jlContacts = new javax.swing.JList<>();
         jPanel1 = new javax.swing.JPanel();
         jlStatus = new javax.swing.JLabel();
-        jbExit = new javax.swing.JButton();
         jmbMain = new javax.swing.JMenuBar();
         jmFile = new javax.swing.JMenu();
+        jmiExit = new javax.swing.JMenuItem();
         jmList = new javax.swing.JMenu();
         jmiAdd = new javax.swing.JMenuItem();
         jmiRemove = new javax.swing.JMenuItem();
@@ -108,7 +114,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jlStatus)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(212, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,14 +124,17 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
                 .addContainerGap())
         );
 
-        jbExit.setText("EXIT");
-        jbExit.addActionListener(new java.awt.event.ActionListener() {
+        jmFile.setText("File");
+
+        jmiExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        jmiExit.setText("Exit");
+        jmiExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbExitActionPerformed(evt);
+                jmiExitActionPerformed(evt);
             }
         });
+        jmFile.add(jmiExit);
 
-        jmFile.setText("File");
         jmbMain.add(jmFile);
 
         jmList.setText("List");
@@ -159,17 +168,12 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 151, Short.MAX_VALUE)
-                .addComponent(jbExit))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jbExit)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -182,10 +186,10 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         if (evt.getClickCount() == 2 && jlContacts.getSelectedIndex() >= 0) {
             evt.consume();
 
-            String ipAddress = jlContacts.getSelectedValue().getIpAddress();
+            Contact selectedContact = jlContacts.getSelectedValue();
 
             try {
-                ChatFrame chat = new ChatFrame(ipAddress, SERVER_PORT);
+                ChatFrame chat = new ChatFrame(selectedContact, SERVER_PORT);
                 receiver.addListener(chat);
                 chat.addWindowListener(new WindowAdapter() {
                     @Override
@@ -197,6 +201,8 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             } catch (IOException ex) {
                 Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            jlContacts.setSelectedIndex(-1);
         }
 
     }//GEN-LAST:event_jlContactsMouseClicked
@@ -230,10 +236,10 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         }
     }//GEN-LAST:event_jmiRemoveActionPerformed
 
-    private void jbExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExitActionPerformed
+    private void jmiExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiExitActionPerformed
         saveAction();
         System.exit(0);
-    }//GEN-LAST:event_jbExitActionPerformed
+    }//GEN-LAST:event_jmiExitActionPerformed
 
     /**
      * @param args the command line arguments
@@ -274,13 +280,13 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton jbExit;
     private javax.swing.JList<Contact> jlContacts;
     private javax.swing.JLabel jlStatus;
     private javax.swing.JMenu jmFile;
     private javax.swing.JMenu jmList;
     private javax.swing.JMenuBar jmbMain;
     private javax.swing.JMenuItem jmiAdd;
+    private javax.swing.JMenuItem jmiExit;
     private javax.swing.JMenuItem jmiRemove;
     // End of variables declaration//GEN-END:variables
 
@@ -305,6 +311,26 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
 
     @Override
     public void messageReceived(String address, String message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (Contact contact : contactList) {
+            if (contact.getIpAddress().equals(address)) {
+                contact.increase(1);
+                jlContacts.repaint();
+                break;
+            }
+        }
+
+        ChatFrame chatFrame = null;
+        Window[] windows = getWindows();
+        for (Window window : windows) {
+            if (window instanceof ChatFrame) {
+                chatFrame = (ChatFrame) window;
+            }
+        }
+
+        if (chatFrame != null) {
+            if (chatFrame.getContact().getIpAddress().equals(address) && !chatFrame.isActive()) {
+                chatFrame.requestFocus();
+            }
+        }
     }
 }

@@ -206,21 +206,27 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
 
             Contact selectedContact = jlContacts.getSelectedValue();
 
-            try {
-                ChatFrame chat = new ChatFrame(selectedContact, SERVER_PORT);
-                receiver.addListener(chat);
-                chat.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-                        receiver.removeListener(chat);
-                    }
-                });
-                chat.setVisible(true);
-            } catch (IOException ex) {
-                Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
+            ChatFrame chat = findChat(selectedContact);
+
+            if (chat == null) {
+                try {
+                    chat = new ChatFrame(selectedContact, SERVER_PORT);
+                    receiver.addListener(chat);
+                    chat.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                            receiver.removeListener((ChatFrame) e.getWindow());
+                        }
+                    });
+                } catch (IOException ex) {
+                    Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             jlContacts.setSelectedIndex(-1);
+
+            chat.setVisible(true);
+            chat.requestFocus();
         }
 
     }//GEN-LAST:event_jlContactsMouseClicked
@@ -262,9 +268,9 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     }//GEN-LAST:event_jmiExitActionPerformed
 
     private void jmiSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSettingsActionPerformed
-        
+
         new SettingsFrame().setVisible(true);
-        
+
     }//GEN-LAST:event_jmiSettingsActionPerformed
 
     /**
@@ -325,24 +331,24 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         } catch (IOException ex) {
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         Rectangle bounds = getBounds();
-        
+
         Settings.setProperty("frame.contacts.x", Integer.toString(bounds.x));
         Settings.setProperty("frame.contacts.y", Integer.toString(bounds.y));
         Settings.setProperty("frame.contacts.w", Integer.toString(bounds.width));
         Settings.setProperty("frame.contacts.h", Integer.toString(bounds.height));
-        
+
         Settings.storeSettings();
     }
 
     private void loadAction() {
         File history = new File("history");
-        
+
         if (!history.exists()) {
             history.mkdir();
         }
-        
+
         try (FileInputStream fis = new FileInputStream("contacts.list")) {
             ObjectInputStream ois = new ObjectInputStream(fis);
             contactList = (List<Contact>) ois.readObject();
@@ -354,7 +360,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         int y = Integer.parseInt(Settings.getProperty("frame.contacts.y", "0"));
         int w = Integer.parseInt(Settings.getProperty("frame.contacts.w", "230"));
         int h = Integer.parseInt(Settings.getProperty("frame.contacts.h", "360"));
-        
+
         setBounds(x, y, w, h);
     }
 
@@ -377,7 +383,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
 
             loadContactList();
         }
-        
+
         foundContact.setName(nickname);
 
         ChatFrame foundChat = null;
@@ -385,7 +391,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         for (Window window : windows) {
             if (window instanceof ChatFrame) {
                 ChatFrame chat = (ChatFrame) window;
-                
+
                 if (chat.getContact().equals(foundContact) && chat.isDisplayable()) {
                     foundChat = chat;
                 }
@@ -402,5 +408,18 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         }
 
         jlContacts.repaint();
+    }
+
+    private ChatFrame findChat(Contact selectedContact) {
+        for (Window window : getWindows()) {
+            if (window instanceof ChatFrame && window.isDisplayable()) {
+                ChatFrame chatFrame = (ChatFrame) window;
+                if (selectedContact.equals(chatFrame.getContact())) {
+                    return chatFrame;
+                }
+            }
+        }
+
+        return null;
     }
 }

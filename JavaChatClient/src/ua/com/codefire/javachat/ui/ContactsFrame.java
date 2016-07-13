@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import ua.com.codefire.javachat.Settings;
 import ua.com.codefire.javachat.model.Contact;
 import ua.com.codefire.javachat.model.Message;
 import ua.com.codefire.javachat.net.MessageReceiver;
@@ -40,8 +41,6 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     private MessageReceiver receiver;
 
     private List<Contact> contactList = new ArrayList<>();
-    
-    private Properties properties = new Properties();
 
     /**
      * Creates new form ContactsFrame
@@ -310,12 +309,14 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         
         Rectangle bounds = getBounds();
         
+        Properties properties = Settings.getInstance().getProperties();
+        
         properties.setProperty("frame.contacts.x", Integer.toString(bounds.x));
         properties.setProperty("frame.contacts.y", Integer.toString(bounds.y));
         properties.setProperty("frame.contacts.w", Integer.toString(bounds.width));
         properties.setProperty("frame.contacts.h", Integer.toString(bounds.height));
         
-        storeSettings();
+        Settings.getInstance().storeSettings();
     }
 
     private void loadAction() {
@@ -332,7 +333,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        loadSettings();
+        Properties properties = Settings.getInstance().getProperties();
         
         int x = Integer.parseInt(properties.getProperty("frame.contacts.x", "0"));
         int y = Integer.parseInt(properties.getProperty("frame.contacts.y", "0"));
@@ -384,25 +385,5 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         }
 
         jlContacts.repaint();
-    }
-
-    private void loadSettings() {
-        try (FileInputStream fis = new FileInputStream("settings.properties")) {
-            properties.load(fis);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void storeSettings() {
-        try (FileOutputStream fos = new FileOutputStream("settings.properties")) {
-            properties.store(fos, null);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ContactsFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

@@ -6,16 +6,9 @@
 package ua.com.codefire.javachat.ui;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ua.com.codefire.javachat.model.Contact;
 import ua.com.codefire.javachat.model.Message;
 import ua.com.codefire.javachat.net.MessageReceiverListener;

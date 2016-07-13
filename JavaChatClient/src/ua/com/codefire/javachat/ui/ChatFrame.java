@@ -16,7 +16,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ua.com.codefire.javachat.net.Contact;
+import ua.com.codefire.javachat.model.Contact;
+import ua.com.codefire.javachat.model.Message;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
 import ua.com.codefire.javachat.net.MessageSender;
 
@@ -48,7 +49,9 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         initNetwork();
 
         initComponents();
+
         loadHistory();
+
         setTitle(contact.toString());
 
         jtaMessage.requestFocus();
@@ -166,7 +169,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-        saveHistory();
+//        saveHistory();
     }//GEN-LAST:event_formWindowClosing
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
@@ -183,7 +186,8 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
         // TODO: Validate address and message
         if (sender.sendMessage(contact.getIpAddress(), message)) {
-            addHistory("me", message);
+            Message msg = new Message(new Date(), message);
+            addHistory(msg.getTimestamp(), "me", msg.getText());
             jtaMessage.setText("");
 
         } else {
@@ -223,32 +227,42 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     @Override
     public void messageReceived(String address, String message) {
         if (contact.getIpAddress().equals(address)) {
-            addHistory(address, message);
+            Message msg = new Message(new Date(), message, isActive());
+            contact.getMessages().add(msg);
+            addHistory(msg.getTimestamp(), address, msg.getText());
         }
     }
 
-    private void addHistory(String address, String message) {
-        String history = String.format("[%s] %s:\n    %s\n", timeFormat.format(new Date()), address, message);
+    private void addHistory(Date when, String address, String message) {
+        String history = String.format("[%s] %s:\n    %s\n", timeFormat.format(when), address, message);
         jtaHistory.append(history);
     }
 
-    private void saveHistory() {
-        try (FileOutputStream fos = new FileOutputStream(new File("history", contact.getIpAddress() + ".history"))) {
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(jtaHistory.getText());
-        } catch (IOException ex) {
-            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+//    private void saveHistory() {
+//        try (FileOutputStream fos = new FileOutputStream(new File("history", contact.getIpAddress() + ".history"))) {
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//            oos.writeObject(jtaHistory.getText());
+//        } catch (IOException ex) {
+//            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 
     private void loadHistory() {
-        try (FileInputStream fis = new FileInputStream(new File("history", contact.getIpAddress() + ".history"))) {
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            jtaHistory.setText((String) ois.readObject());
-        } catch (IOException ex) {
-            jlStatus.setText("You have no message history with this contact yet");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+        for (Message message : contact.getMessages()) {
+            if (message.isIncome()) {
+                addHistory(message.getTimestamp(), contact.getIpAddress(), message.getText());
+            } else {
+                addHistory(message.getTimestamp(), "me", message.getText());
+            }
         }
+
+//        try (FileInputStream fis = new FileInputStream(new File("history", contact.getIpAddress() + ".history"))) {
+//            ObjectInputStream ois = new ObjectInputStream(fis);
+//            jtaHistory.setText((String) ois.readObject());
+//        } catch (IOException ex) {
+//            jlStatus.setText("You have no message history with this contact yet");
+//        } catch (ClassNotFoundException ex) {
+//            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 }

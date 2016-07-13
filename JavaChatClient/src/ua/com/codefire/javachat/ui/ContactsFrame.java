@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import ua.com.codefire.javachat.net.Contact;
+import ua.com.codefire.javachat.model.Contact;
 import ua.com.codefire.javachat.net.MessageReceiver;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
 

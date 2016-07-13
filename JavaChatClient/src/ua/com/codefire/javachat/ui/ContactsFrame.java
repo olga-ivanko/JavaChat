@@ -88,6 +88,8 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         jlStatus = new javax.swing.JLabel();
         jmbMain = new javax.swing.JMenuBar();
         jmFile = new javax.swing.JMenu();
+        jmiSettings = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jmiExit = new javax.swing.JMenuItem();
         jmList = new javax.swing.JMenu();
         jmiAdd = new javax.swing.JMenuItem();
@@ -130,6 +132,11 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         );
 
         jmFile.setText("File");
+
+        jmiSettings.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        jmiSettings.setText("Settings");
+        jmFile.add(jmiSettings);
+        jmFile.add(jSeparator1);
 
         jmiExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         jmiExit.setText("Exit");
@@ -287,6 +294,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JList<Contact> jlContacts;
     private javax.swing.JLabel jlStatus;
     private javax.swing.JMenu jmFile;
@@ -295,6 +303,7 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
     private javax.swing.JMenuItem jmiAdd;
     private javax.swing.JMenuItem jmiExit;
     private javax.swing.JMenuItem jmiRemove;
+    private javax.swing.JMenuItem jmiSettings;
     // End of variables declaration//GEN-END:variables
 
     private void saveAction() {

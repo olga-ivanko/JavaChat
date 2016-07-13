@@ -16,20 +16,21 @@
  */
 package ua.com.codefire.javachat.ui;
 
-import java.util.Properties;
 import ua.com.codefire.javachat.Settings;
 
 /**
  *
  * @author CodeFireUA <edu@codefire.com.ua>
  */
-public class SettingsFrame extends javax.swing.JFrame {
+public class SettingsFrame extends javax.swing.JDialog {
 
     /**
      * Creates new form SettingsFrame
      */
     public SettingsFrame() {
         initComponents();
+        
+        setModal(true);
         
         String nickname = Settings.getProperty("nickname");
         jtfNickname.setText(nickname);

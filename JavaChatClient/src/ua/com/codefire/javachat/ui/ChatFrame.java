@@ -85,7 +85,6 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jmiCloseWindow = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jmiExit = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -151,9 +150,6 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         jmFile.add(jmiExit);
 
         jmbMain.add(jmFile);
-
-        jMenu2.setText("Edit");
-        jmbMain.add(jMenu2);
 
         setJMenuBar(jmbMain);
 
@@ -245,7 +241,6 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;

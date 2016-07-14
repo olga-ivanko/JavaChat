@@ -28,6 +28,7 @@ import ua.com.codefire.javachat.model.Contact;
 import ua.com.codefire.javachat.model.Message;
 import ua.com.codefire.javachat.net.MessageReceiver;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
+import ua.com.codefire.javachat.util.Notification;
 
 /**
  *
@@ -402,11 +403,13 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
 
         if (foundChat != null) {
             if (foundChat.getContact().getIpAddress().equals(address) && !foundChat.isActive()) {
-                foundChat.requestFocus();
+                Notification.play(Notification.Type.INCOMING);
             }
         } else {
             foundContact.increase(1);
             foundContact.getMessages().add(msg);
+
+            Notification.play(Notification.Type.INCOMING);
         }
 
         jlContacts.repaint();

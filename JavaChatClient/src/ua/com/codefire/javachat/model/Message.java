@@ -33,10 +33,10 @@ public class Message implements Serializable{
 
     /**
      * Constructor for incoming message creation.
-     * 
+     *
      * @param timestamp
      * @param text
-     * @param read 
+     * @param read
      */
     public Message(Date timestamp, String text, boolean read) {
         this.timestamp = timestamp;
@@ -44,7 +44,11 @@ public class Message implements Serializable{
         this.read = read;
         this.income = true;
     }
-    
+
+    public void setIncome(boolean income) {
+        this.income = income;
+    }
+
     public Date getTimestamp() {
         return timestamp;
     }
@@ -68,5 +72,4 @@ public class Message implements Serializable{
         this.read = true;
     }
 
-    
 }

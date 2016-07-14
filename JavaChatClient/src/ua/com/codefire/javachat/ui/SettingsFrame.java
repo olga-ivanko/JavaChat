@@ -32,10 +32,19 @@ public class SettingsFrame extends javax.swing.JDialog {
         
         setModal(true);
         
-        setModal(true);
+        jtfNickname.setText(Settings.getProperty("nickname"));
         
-        String nickname = Settings.getProperty("nickname");
-        jtfNickname.setText(nickname);
+        jtfBaseAddress.setText(Settings.getProperty("network.base_address", "192.168.1.X"));
+        
+        boolean b1 = Boolean.parseBoolean(Settings.getProperty("contacts.unknown.accept", "true"));
+        jcbAcceptUnknowContacts.setSelected(b1);
+        boolean b2 = Boolean.parseBoolean(Settings.getProperty("contacts.messages.unknown.accept", "true"));
+        jcbAcceptUnknowContactsMessages.setSelected(b2);
+        boolean b3 = Boolean.parseBoolean(Settings.getProperty("sound.outgoing.play", "true"));
+        jcbPlayMessageSendSound.setSelected(b3);
+        boolean b4 = Boolean.parseBoolean(Settings.getProperty("sound.incoming.play", "true"));
+        jcbPlayMessageReceivedSound.setSelected(b4);
+        
     }
 
     /**
@@ -50,8 +59,18 @@ public class SettingsFrame extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jtfNickname = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jtfBaseAddress = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        jcbAcceptUnknowContacts = new javax.swing.JCheckBox();
+        jcbAcceptUnknowContactsMessages = new javax.swing.JCheckBox();
+        jPanel3 = new javax.swing.JPanel();
+        jcbPlayMessageSendSound = new javax.swing.JCheckBox();
+        jcbPlayMessageReceivedSound = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jButton1.setText("OK");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -69,6 +88,93 @@ public class SettingsFrame extends javax.swing.JDialog {
 
         jLabel1.setText("Nickname:");
 
+        jtfNickname.setText("Unknown");
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Network"));
+
+        jLabel2.setText("Base address:");
+
+        jtfBaseAddress.setText("192.168.1.x");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jtfBaseAddress)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jtfBaseAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Contacts"));
+
+        jcbAcceptUnknowContacts.setSelected(true);
+        jcbAcceptUnknowContacts.setText("Accept unknown contacts");
+
+        jcbAcceptUnknowContactsMessages.setSelected(true);
+        jcbAcceptUnknowContactsMessages.setText("Accept income messages from unknown contacts");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jcbAcceptUnknowContacts)
+                    .addComponent(jcbAcceptUnknowContactsMessages))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jcbAcceptUnknowContacts)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jcbAcceptUnknowContactsMessages)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Chats"));
+
+        jcbPlayMessageSendSound.setSelected(true);
+        jcbPlayMessageSendSound.setText("Play message send sound");
+
+        jcbPlayMessageReceivedSound.setSelected(true);
+        jcbPlayMessageReceivedSound.setText("Play message received sound");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jcbPlayMessageSendSound)
+                    .addComponent(jcbPlayMessageReceivedSound))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jcbPlayMessageSendSound)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jcbPlayMessageReceivedSound)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -76,15 +182,18 @@ public class SettingsFrame extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 140, Short.MAX_VALUE)
+                        .addGap(0, 226, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfNickname)))
+                        .addComponent(jtfNickname))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -94,7 +203,13 @@ public class SettingsFrame extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jtfNickname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -107,6 +222,11 @@ public class SettingsFrame extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
         Settings.setProperty("nickname", jtfNickname.getText());
+        Settings.setProperty("network.base_address", jtfBaseAddress.getText());
+        Settings.setProperty("contacts.unknown.accept", Boolean.toString(jcbAcceptUnknowContacts.isSelected()));
+        Settings.setProperty("contacts.messages.unknown.accept", Boolean.toString(jcbAcceptUnknowContactsMessages.isSelected()));
+        Settings.setProperty("sound.outgoing.play", Boolean.toString(jcbPlayMessageSendSound.isSelected()));
+        Settings.setProperty("sound.incoming.play", Boolean.toString(jcbPlayMessageReceivedSound.isSelected()));
         Settings.storeSettings();
         
         dispose();
@@ -123,6 +243,15 @@ public class SettingsFrame extends javax.swing.JDialog {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JCheckBox jcbAcceptUnknowContacts;
+    private javax.swing.JCheckBox jcbAcceptUnknowContactsMessages;
+    private javax.swing.JCheckBox jcbPlayMessageReceivedSound;
+    private javax.swing.JCheckBox jcbPlayMessageSendSound;
+    private javax.swing.JTextField jtfBaseAddress;
     private javax.swing.JTextField jtfNickname;
     // End of variables declaration//GEN-END:variables
 }

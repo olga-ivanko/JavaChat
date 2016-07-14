@@ -269,7 +269,9 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
 
     private void jmiSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSettingsActionPerformed
 
-        new SettingsFrame().setVisible(true);
+        SettingsFrame settingsFrame = new SettingsFrame();
+        settingsFrame.setLocationRelativeTo(this);
+        settingsFrame.setVisible(true);
 
     }//GEN-LAST:event_jmiSettingsActionPerformed
 

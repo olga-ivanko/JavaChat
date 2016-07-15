@@ -71,6 +71,10 @@ public class MessageReceiver implements Runnable {
                             listener.messageReceived(income.getInetAddress().getHostAddress(), nickname, message);
                         }
                         break;
+                    case "PING":
+                        dos.writeUTF("OK");
+                        dos.flush();
+                        break;
                     default:
                         dos.writeUTF("UNKNOWN COMMAND");
                         dos.flush();

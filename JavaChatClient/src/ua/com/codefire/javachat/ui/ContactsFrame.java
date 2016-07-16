@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -308,7 +310,10 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new ContactsFrame().setVisible(true);
+                ContactsFrame contactsFrame = new ContactsFrame();
+                contactsFrame.setVisible(true);
+                Image image = new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage();
+                contactsFrame.setIconImage(image);
             }
         });
     }
@@ -344,8 +349,6 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         Settings.setProperty("frame.contacts.h", Integer.toString(bounds.height));
 
         Settings.storeSettings();
-        
-        setIconImage(new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage());
     }
 
     private void loadAction() {

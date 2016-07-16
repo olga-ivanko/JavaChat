@@ -5,12 +5,10 @@
  */
 package ua.com.codefire.javachat.ui;
 
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -283,37 +280,11 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(ContactsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(ContactsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(ContactsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(ContactsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-        //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ContactsFrame contactsFrame = new ContactsFrame();
-                contactsFrame.setVisible(true);
-                Image image = new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage();
-                contactsFrame.setIconImage(image);
+                new ContactsFrame().setVisible(true);
             }
         });
     }
@@ -360,7 +331,11 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
 
         try (FileInputStream fis = new FileInputStream("contacts.list")) {
             ObjectInputStream ois = new ObjectInputStream(fis);
-            contactList = (List<Contact>) ois.readObject();
+            Object object = ois.readObject();
+
+            if (object instanceof List) {
+                contactList = (List<Contact>) object;
+            }
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -371,6 +346,8 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         int h = Integer.parseInt(Settings.getProperty("frame.contacts.h", "360"));
 
         setBounds(x, y, w, h);
+        
+        setIconImage(new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage());
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import ua.com.codefire.javachat.model.Contact;
 import ua.com.codefire.javachat.model.Message;
@@ -56,6 +57,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         checkAccessibility();
 
         setTitle(contact.toString());
+        setIconImage(new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage());
 
         jtaMessage.requestFocus();
     }

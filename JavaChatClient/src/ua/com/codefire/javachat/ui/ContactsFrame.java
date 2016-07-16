@@ -5,6 +5,7 @@
  */
 package ua.com.codefire.javachat.ui;
 
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
@@ -15,13 +16,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import ua.com.codefire.javachat.Settings;
 import ua.com.codefire.javachat.model.Contact;
@@ -343,6 +344,8 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         Settings.setProperty("frame.contacts.h", Integer.toString(bounds.height));
 
         Settings.storeSettings();
+        
+        setIconImage(new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage());
     }
 
     private void loadAction() {

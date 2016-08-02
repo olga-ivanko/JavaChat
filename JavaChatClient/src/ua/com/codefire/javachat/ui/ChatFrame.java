@@ -7,13 +7,21 @@ package ua.com.codefire.javachat.ui;
 
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import ua.com.codefire.javachat.model.Contact;
-import ua.com.codefire.javachat.model.Message;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
 import ua.com.codefire.javachat.net.MessageSender;
 import ua.com.codefire.javachat.net.Pinger;
@@ -36,6 +44,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     private final int serverPort;
     private MessageSender sender;
     private Pinger pinger;
+    private String conn;
 
     /**
      * Creates new form ChatFrame
@@ -52,6 +61,10 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
         initComponents();
 
+        conn = "jdbc:sqlite:database,sl3";
+
+        jtaMessage.requestFocus();
+
         loadHistory();
 
         checkAccessibility();
@@ -59,7 +72,6 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         setTitle(contact.toString());
         setIconImage(new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage());
 
-        jtaMessage.requestFocus();
     }
 
     private void initNetwork() throws IOException {
@@ -237,10 +249,22 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 
             // TODO: Validate address and message
             if (sender.sendMessage(contact.getIpAddress(), message)) {
-                Message msg = new Message(new Date(), message);
-                msg.setIncome(false);
-                contact.getMessages().add(msg);
-                addHistory(msg.getTimestamp(), "me", msg.getText());
+//                Message msg = new Message(new Date(), message);
+//                msg.setIncome(false);
+//                contact.getMessages().add(msg);
+                String sql = "INSERT INTO history VALUES(null, ?, ?, ?, ?)";
+                try (Connection cnt = DriverManager.getConnection(conn)) {
+                    PreparedStatement prepareStatement = cnt.prepareStatement(sql);
+                    prepareStatement.setString(1, DATE_FORMAT.format(new Date()));
+                    prepareStatement.setString(2, "me");
+                    prepareStatement.setString(3, contact.getName());
+                    prepareStatement.setString(4, message);
+                    prepareStatement.executeUpdate();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                addHistory(new Date(), "me", message);
                 jtaMessage.setText("");
 
                 Notification.play(Notification.Type.OUTGOING);
@@ -273,9 +297,20 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     @Override
     public void messageReceived(String address, String nickname, String message) {
         if (contact.getIpAddress().equals(address)) {
-            Message msg = new Message(new Date(), message, isActive());
-            contact.getMessages().add(msg);
-            addHistory(msg.getTimestamp(), contact.getName(), msg.getText());
+//            Message msg = new Message(new Date(), message, isActive());
+            String sql = "INSERT INTO history VALUES(null, ?, ?, ?, ?)";
+            try (Connection cnt = DriverManager.getConnection(conn)) {
+                PreparedStatement ps = cnt.prepareStatement(sql);
+                ps.setString(1, DATE_FORMAT.format(new Date()));
+                ps.setString(2, contact.getName());
+                ps.setString(3, "me");
+                ps.setString(4, message);
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+//            contact.getMessages().add(msg);
+            addHistory(new Date(), contact.getName(), message);
         }
     }
 
@@ -296,10 +331,31 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     }
 
     private void loadHistory() {
-        for (Message message : contact.getMessages()) {
-            String from = message.isIncome() ? contact.getName() : "me";
-            addHistory(message.getTimestamp(), from, message.getText());
+        try (Connection cnt = DriverManager.getConnection(conn)) {
+            Statement stmt = cnt.createStatement();
+            // date column initialy was created as NUMERIC
+            stmt.execute("CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, sender TEXT, receiver TEXT, message TEXT)");
+            String load = "SELECT date, sender, message FROM history WHERE sender = 'me' OR receiver = 'me'";
+
+            if (stmt.execute(load)) {
+                ResultSet rs = stmt.executeQuery(load);
+                System.out.println(rs.next());
+                while (rs.next()) {
+                    String date = rs.getString(1);
+                    Date when = DATE_FORMAT.parse(date);
+                    addHistory(when, rs.getString(2), rs.getString(3));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(ChatFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+//        for (Message message : contact.getMessages()) {
+//            String from = message.isIncome() ? contact.getName() : "me";
+//            addHistory(message.getTimestamp(), from, message.getText());
+//        }
     }
 
     private void checkAccessibility() {

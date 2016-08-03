@@ -16,6 +16,7 @@
  */
 package ua.com.codefire.javachat;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ua.com.codefire.javachat.ui.ContactsFrame;
 
 /**
  *
@@ -40,6 +40,10 @@ public final class Settings {
 
     public static Settings getInstance() {
         return instance;
+    }
+
+    public static boolean exists() {
+        return new File("settings.properties").exists();
     }
 
     public static Properties loadSettings() {

@@ -293,7 +293,22 @@ public class ContactsFrame extends javax.swing.JFrame implements MessageReceiver
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new ContactsFrame().setVisible(true);
+                if (Settings.exists()) {
+                    new ContactsFrame().setVisible(true);
+                } else {
+                    SettingsFrame sf = new SettingsFrame();
+                    sf.setModal(false);
+                    sf.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            if (Settings.exists()) {
+                                new ContactsFrame().setVisible(true);
+                            }
+                        }
+                    });
+                    sf.setLocationRelativeTo(null);
+                    sf.setVisible(true);
+                }
             }
         });
     }

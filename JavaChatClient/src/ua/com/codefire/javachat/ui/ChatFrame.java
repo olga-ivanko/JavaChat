@@ -61,9 +61,8 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         this.contact = contact;
         this.serverPort = serverPort;
 
-        init();
-
         initComponents();
+        init();
 
         conn = "jdbc:sqlite:database.sl3";
 

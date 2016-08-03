@@ -1,0 +1,7 @@
+/JavaChatClient/build/
+/JavaChatClient/contacts.list
+/JavaChatClient/history/
+/JavaChatClient/target/
+/JavaChatClient/dist/
+/JavaChatClient/settings.properties
+/JavaChatClient/database.sl3

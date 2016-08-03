@@ -69,6 +69,7 @@ public class MessageReceiver implements Runnable {
 
                         for (MessageReceiverListener listener : listeners) {
                             listener.messageReceived(income.getInetAddress().getHostAddress(), nickname, message);
+//                            System.out.println(income.getInetAddress().getHostAddress());
                         }
                         break;
                     case "PING":

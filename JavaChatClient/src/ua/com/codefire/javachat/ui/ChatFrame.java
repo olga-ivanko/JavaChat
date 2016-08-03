@@ -16,6 +16,8 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,13 +27,14 @@ import ua.com.codefire.javachat.model.Contact;
 import ua.com.codefire.javachat.net.MessageReceiverListener;
 import ua.com.codefire.javachat.net.MessageSender;
 import ua.com.codefire.javachat.net.Pinger;
+import ua.com.codefire.javachat.net.PingerListener;
 import ua.com.codefire.javachat.util.Notification;
 
 /**
  *
  * @author homefulloflove
  */
-public class ChatFrame extends javax.swing.JFrame implements MessageReceiverListener {
+public class ChatFrame extends javax.swing.JFrame implements MessageReceiverListener, PingerListener {
 
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
     private static final SimpleDateFormat WEEK_FORMAT = new SimpleDateFormat("EEE HH:mm:ss");
@@ -45,6 +48,7 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
     private MessageSender sender;
     private Pinger pinger;
     private String conn;
+    private Timer timer;
 
     /**
      * Creates new form ChatFrame
@@ -57,26 +61,31 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
         this.contact = contact;
         this.serverPort = serverPort;
 
-        initNetwork();
+        init();
 
         initComponents();
 
-        conn = "jdbc:sqlite:database,sl3";
+        conn = "jdbc:sqlite:database.sl3";
 
         jtaMessage.requestFocus();
 
         loadHistory();
-
-        checkAccessibility();
-
         setTitle(contact.toString());
         setIconImage(new ImageIcon(getClass().getResource("/ua/com/codefire/javachat/resources/app_icon.png")).getImage());
 
     }
 
-    private void initNetwork() throws IOException {
+    private void init() throws IOException {
         sender = new MessageSender(serverPort);
-        pinger = new Pinger(serverPort);
+        pinger = new Pinger(contact.getIpAddress(), serverPort);
+        pinger.add(this);
+        timer = new Timer("Popinguy", true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new Thread(pinger).start();
+            }
+        }, 0, 10000);
     }
 
     public Contact getContact() {
@@ -275,7 +284,6 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             }
             jtaHistory.setCaretPosition(jtaHistory.getDocument().getLength());
             jtaMessage.requestFocus();
-            checkAccessibility();
         }
     }
 
@@ -335,7 +343,8 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
             Statement stmt = cnt.createStatement();
             // date column initialy was created as NUMERIC
             stmt.execute("CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, sender TEXT, receiver TEXT, message TEXT)");
-            String load = "SELECT date, sender, message FROM history WHERE sender = 'me' OR receiver = 'me'";
+//            String load = "SELECT date, sender, message FROM history WHERE sender = 'me' AND receiver = " + contact.getName() + " OR receiver = 'me' AND sender = " + contact.getName();
+            String load = "SELECT date, sender, message FROM history WHERE sender = '" + contact.getName() + "' OR receiver = '" + contact.getName() + "'";
 
             if (stmt.execute(load)) {
                 ResultSet rs = stmt.executeQuery(load);
@@ -358,8 +367,9 @@ public class ChatFrame extends javax.swing.JFrame implements MessageReceiverList
 //        }
     }
 
-    private void checkAccessibility() {
-        if (pinger.pingIP(contact.getIpAddress())) {
+    @Override
+    public void ping(String adress, boolean reachable) {
+        if (reachable) {
             jlStatus.setText(String.format("%s is online", contact.getName()));
         } else {
             jlStatus.setText(String.format("%s is offline. Message can not be sent", contact.getName()));
